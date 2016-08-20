@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Google Photos Embed Code Generator</title>
+    <style>
+      table {
+        border-collapse: collapse;
+        margin: 10px;
+      }
+      table tr {
+        border: 1;
+        border-top: 1px solid #e0e0e0;
+      }
+      table td {
+        border-bottom:1px solid #e0e0e0;
+        border-spacing: 0;
+        padding: 5px
+      }
+    </style>
+    <!-- load moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment-with-locales.min.js"></script>
+    <script type="text/javascript">
+
+      // The Browser API key obtained from the Google Developers Console.
+      var developerKey = 'AIzaSyCrQKCG_Ly61zaO6-ba93BjTTb_W6v_r4Y';
+
+      // The Client ID obtained from the Google Developers Console. Replace with your own Client ID.
+      var clientId = "836573439566-pannen061gqgreoo4qv1na39on7smtpd.apps.googleusercontent.com";
+
+      // Scope to use to access user's photos.
+      var scope = ['https://www.googleapis.com/auth/photos'];
+
+      var pickerApiLoaded = false;
+      var oauthToken;
+
+      // Use the API Loader script to load google.picker and gapi.auth.
+      function onApiLoad() {
+        gapi.load('auth', {'callback': onAuthApiLoad});
+        gapi.load('picker', {'callback': onPickerApiLoad});
+      }
+
+      function onAuthApiLoad() {
+        window.gapi.auth.authorize(
+            {
+              'client_id': clientId,
+              'scope': scope,
+              'immediate': false
+            },
+            handleAuthResult);
+      }
+
+      function onPickerApiLoad() {
+        pickerApiLoaded = true;
+        createPicker();
+      }
+
+      function handleAuthResult(authResult) {
+        if (authResult && !authResult.error) {
+          oauthToken = authResult.access_token;
+          createPicker();
+        }
+      }
+
+      // Create and render a Picker object for picking user Photos.
+      function createPicker() {
+        if (pickerApiLoaded && oauthToken) {
+          var picker = new google.picker.PickerBuilder().
+              addView(google.picker.ViewId.PHOTOS).
+              enableFeature(google.picker.Feature.MULTISELECT_ENABLED).
+              setOAuthToken(oauthToken).
+              setDeveloperKey(developerKey).
+              setCallback(pickerCallback).
+              build();
+          picker.setVisible(true);
+        }
+      }
+
+      // A simple callback implementation.
+      function pickerCallback(data) {
+      var url = 'nothing';
+      if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
+
+          // アルバム情報を取得
+          var album = data[google.picker.Response.PARENTS][0];
+
+          // 日付フォーマットをmoment.jsで扱う
+          moment.locale("ja");
+
+          // ここはあたらしくオブジェクトを作る必要はないけど
+          var pick_album_info = new Object();
+          pick_album_info["album_name"] = album["name"];
+          pick_album_info["album_updated_date"] = moment(album["lastEditedUtc"]).utc().format();
+          pick_album_info["album_audience"] = album["audience"];
+
+          // 選択した写真
+          var doc = data[google.picker.Response.DOCUMENTS];
+
+          // 選択した画像の各jsonから"thumbnails"Array内の最後のオブジェクト型内にあるurlを取り出す。結果は複数のurlのarrayが生成される
+          var select_img_urls = doc.map(
+            function get_thum_url(currentValue, index, array){
+                // サムネイル用
+                var thum_obj = currentValue["thumbnails"].slice(1)[0];
+                // 埋め込みタグ用
+                var embed_obj = currentValue["thumbnails"].slice(-1)[0];
+                return ({"thum_obj":thum_obj,
+                        "embed_obj":embed_obj,
+                        });
+            });
+
+          // dom操作で描写するタグを生成する
+          var embed_tags_str = ""
+          for (var img_i = 0; img_i < select_img_urls.length; img_i++){
+              
+            // imgタグを生成する
+            var embed_obj = select_img_urls[img_i].embed_obj
+            var embed_tag_str = `<img src="${embed_obj.url}" width="${embed_obj.width}" height="${embed_obj.height}">`
+
+            // テーブルに入れる
+            embed_tags_str = embed_tags_str + `
+              <tr>
+                <td><img src="${select_img_urls[img_i].thum_obj.url}"></td>
+                <td>
+                  <textarea name="embed_tag" rows="3" cols="60" onclick="this.select();">${embed_tag_str}</textarea>
+                </td>
+              </tr>
+            `;
+          }
+
+          // アルバム情報を含めたタグを生成
+          var result_text = `
+          <table>
+            <tr>
+              <td>アルバム名</td>
+              <td>${pick_album_info["album_name"]}</td>
+            </tr>
+            <tr>
+              <td>lastEditedUtc</td>
+              <td>${pick_album_info["album_updated_date"]}</td>
+            </tr>
+            <tr>
+              <td>audience(公開範囲)</td>
+              <td>${pick_album_info["album_audience"]}</td>
+            </tr>
+            ${embed_tags_str}
+          </table>
+          `;
+        }
+        document.getElementById('result').innerHTML = result_text;
+      }
+    </script>
+</head>
+<body>
+
+    <!--<p id="views"><a href="javascript:void(0);" onclick="createPicker();">Googleフォトのアルバム一覧を開く...</a></p>-->
+    <p id="views"><a href="">Googleフォトのアルバム一覧を開く...</a></p>
+
+    <div id="result"></div>
+
+    <!-- The Google API Loader script. -->
+    <script type="text/javascript" src="https://apis.google.com/js/api.js?onload=onApiLoad"></script>
+    <script>
+        Array.prototype.forEach.call(document.querySelectorAll('#views a'), function (ele) {
+          ele.onclick = function () {createPicker();}
+        };
+    </script>
+  </body>
+</html>
