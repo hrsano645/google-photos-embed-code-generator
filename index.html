@@ -169,16 +169,16 @@
 <body>
   <!--使い方を左, アルバム側を左にする-->
   <div class="mdl-grid">
-    <!--<div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">-->
-    <div class="mdl-cell mdl-cell--4-col">
+    <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
       <h1>Googleフォト埋め込みタグジェネレーター</h1>
       <h2 id="-">ここは何？</h2>
       <p>Googleフォトのアルバム内にある写真から埋め込みタグを生成します。</p>
       <h2 id="-">利用方法</h2>
       <ul>
-        <li>このページを開くと自動的にGoogleよりoAuthの認証が実行されます（問答無用で求められるので、この時点で同意できない方は利用はおやめ下さい）</li>
+        <li>このページ内にある「GOOGLEフォトのアルバム一覧を開く...  」ボタンを押すと自動的にGoogleよりoAuthの認証が実行されます
+          （この時点で同意できない方はご利用の中断をお願い致します）</li>
         <li>次にGoogleフォトのアルバム一覧が表示されますので、埋め込みタグを生成させたいアルバム内の写真を選択して下さい</li>
-        <li>選択後に自動的に選択したアルバム情報と選択した写真の埋め込みタグが生成されます</li>
+        <li>選択後に、選択したアルバム情報と選択した写真の埋め込みタグが生成されます</li>
       </ul>
       <h2 id="-">参考</h2>
       <ul>
@@ -195,11 +195,8 @@
       <h2 id="-">ライセンス情報</h2>
       <p>MIT License. See <a href="./LICENSE">LICENSE File</a></p>
     </div>
-    <!--<div id="views" class="mdl-cell mdl-cell--8-col mdl-cell--8-col-tablet mdl-cell--8-col-phone">-->
-    <div id="views" class="mdl-cell mdl-cell--8-col">
-      <!--<a class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onclick="createPicker();">-->
-
-      <a class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+    <div id="views" class="mdl-cell mdl-cell--8-col mdl-cell--8-col-tablet mdl-cell--8-col-phone">
+      <a id="run-picker" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
         Googleフォトのアルバム一覧を開く...
       </a>
       <br>
