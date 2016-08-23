@@ -206,36 +206,26 @@
 
   <!-- The Google API Loader script. -->
   <script type="text/javascript" src="https://apis.google.com/js/api.js?onload=onApiLoad"></script>
-    <script type="text/javascript">
-      Array.prototype.forEach.call(document.querySelectorAll('#views a'), function (ele) {
-        ele.onclick = function () {
-          // var viewId = google.picker.ViewId.PHOTOS;
-          var setOAuthToken = true;
-          
-          // console.log(authApiLoaded);
-          // console.log(oauthToken);
-          if(authApiLoaded && !oauthToken) {
-            // viewIdForhandleAuthResult = viewId;
-            // console.log(typeof viewIdForhandleAuthResult)
-            window.gapi.auth.authorize(
-              {
-                'client_id': clientId,
-                'scope': scope,
-                'immediate': false
-              },
-              handleAuthResult
-            );
-          } else {
-            // console.log('not oauthToken')
-            // createPicker(viewId, setOAuthToken);
-            createPicker(setOAuthToken);
-          }
-          return false;
-        }
-      });
-    </script>
-    <script src="https://code.getmdl.io/1.1.3/material.min.js"></script>
-  </body>
+  <script type="text/javascript">
+    var runPickerButton = document.querySelector('#run-picker');
+    runPickerButton.addEventListener('click', function() {
+      var setOAuthToken = true;
+      if(authApiLoaded && !oauthToken) {
+        window.gapi.auth.authorize(
+          {
+            'client_id': clientId,
+            'scope': scope,
+            'immediate': false
+          },
+          handleAuthResult
+        );
+      } else {
+        createPicker(setOAuthToken);
+      }
+      return false;
+    });
+  </script>
+  <script src="https://code.getmdl.io/1.1.3/material.min.js"></script>
 </body>
 
 </html>
