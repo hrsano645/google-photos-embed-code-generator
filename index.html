@@ -1,36 +1,51 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Google Photos Embed Code Generator</title>
-    <style>
-      table {
-        border-collapse: collapse;
-        margin: 10px;
-      }
-      table tr {
-        border: 1;
-        border-top: 1px solid #e0e0e0;
-      }
-      table td {
-        border-bottom:1px solid #e0e0e0;
-        border-spacing: 0;
-        padding: 5px
-      }
-    </style>
-    <!-- load moment.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment-with-locales.min.js"></script>
-    <script type="text/javascript">
+  <meta charset="UTF-8">
+  <title>Google Photos Embed Code Generator</title>
 
-      // The Browser API key obtained from the Google Developers Console.
-      var developerKey = 'AIzaSyCrQKCG_Ly61zaO6-ba93BjTTb_W6v_r4Y';
+  <!-- Page styles -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.min.css">
+  <link rel="stylesheet" href="main.css">
+  <style>
+    h1 {
+      font-size:20px;
+    }
+    h2 {
+      font-size:16px;
+    }
 
-      // The Client ID obtained from the Google Developers Console. Replace with your own Client ID.
-      var clientId = "836573439566-pannen061gqgreoo4qv1na39on7smtpd.apps.googleusercontent.com";
+    table {
+      border-collapse: collapse;
+      margin: 10px;
+    }
+    
+    table tr {
+      border: 1;
+      border-top: 1px solid #e0e0e0;
+    }
+    
+    table td {
+      border-bottom: 1px solid #e0e0e0;
+      border-spacing: 0;
+      padding: 5px
+    }
+  </style>
+  <!-- load moment.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment-with-locales.min.js"></script>
+  <script type="text/javascript">
 
-      // Scope to use to access user's photos.
-      var scope = ['https://www.googleapis.com/auth/photos'];
+    // The Browser API key obtained from the Google Developers Console.
+    var developerKey = 'AIzaSyCrQKCG_Ly61zaO6-ba93BjTTb_W6v_r4Y';
 
+    // The Client ID obtained from the Google Developers Console. Replace with your own Client ID.
+    var clientId = "836573439566-pannen061gqgreoo4qv1na39on7smtpd.apps.googleusercontent.com";
+
+    // Scope to use to access user's photos.
+    var scope = ['https://www.googleapis.com/auth/photos'];
       var pickerApiLoaded = false;
       var oauthToken;
 
@@ -129,7 +144,7 @@
 
           // アルバム情報を含めたタグを生成
           var result_text = `
-          <table>
+          <table  class="mdl-data-table mdl-js-data-table">
             <tr>
               <td>アルバム名</td>
               <td>${pick_album_info["album_name"]}</td>
@@ -150,19 +165,48 @@
       }
     </script>
 </head>
+
 <body>
+  <!--使い方を左, アルバム側を左にする-->
+  <div class="mdl-grid">
+    <!--<div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">-->
+    <div class="mdl-cell mdl-cell--4-col">
+      <h1>Googleフォト埋め込みタグジェネレーター</h1>
+      <h2 id="-">ここは何？</h2>
+      <p>Googleフォトのアルバム内にある写真から埋め込みタグを生成します。</p>
+      <h2 id="-">利用方法</h2>
+      <ul>
+        <li>このページを開くと自動的にGoogleよりoAuthの認証が実行されます（問答無用で求められるので、この時点で同意できない方は利用はおやめ下さい）</li>
+        <li>次にGoogleフォトのアルバム一覧が表示されますので、埋め込みタグを生成させたいアルバム内の写真を選択して下さい</li>
+        <li>選択後に自動的に選択したアルバム情報と選択した写真の埋め込みタグが生成されます</li>
+      </ul>
+      <h2 id="-">参考</h2>
+      <ul>
+        <li><a href="https://developers.google.com/picker/">Picker  |  Google Developers</a>
+          <ul>
+            <li><a href="https://developers.google.com/picker/docs/#hiworld">Picker API Developer&#39;s Guide  |  Picker  |  Google Developers</a></li>
+            <li><a href="https://developers.google.com/picker/docs/reference">Picker Class Reference  |  Picker  |  Google Developers</a></li>
+            <li><a href="https://developers.google.com/picker/docs/results">Picker JSON Reference  |  Picker  |  Google Developers</a></li>
+          </ul>
+        </li>
+        <li><a href="http://qiita.com/howdy39/items/a7de282e6dd5350f7a7c">Google Pickerを使ってWebサイトのUXを向上させよう - Qiita</a></li>
+        <li><a href="https://getmdl.io/index.html">Material Design Lite</a></li>
+      </ul>
+      <h2 id="-">ライセンス情報</h2>
+      <p>MIT License. See <a href="./LICENSE">LICENSE File</a></p>
+    </div>
+    <!--<div id="views" class="mdl-cell mdl-cell--8-col mdl-cell--8-col-tablet mdl-cell--8-col-phone">-->
+    <div id="views" class="mdl-cell mdl-cell--8-col">
+      <!--<a class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onclick="createPicker();">-->
 
-    <!--<p id="views"><a href="javascript:void(0);" onclick="createPicker();">Googleフォトのアルバム一覧を開く...</a></p>-->
-    <p id="views"><a href="">Googleフォトのアルバム一覧を開く...</a></p>
-
-    <div id="result"></div>
-
-    <!-- The Google API Loader script. -->
-    <script type="text/javascript" src="https://apis.google.com/js/api.js?onload=onApiLoad"></script>
-    <script>
-        Array.prototype.forEach.call(document.querySelectorAll('#views a'), function (ele) {
-          ele.onclick = function () {createPicker();}
-        };
+      <a class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+        Googleフォトのアルバム一覧を開く...
+      </a>
+      <br>
+      <div id="result"></div>
+    </div>
+  </div>
     </script>
+    <script src="https://code.getmdl.io/1.1.3/material.min.js"></script>
   </body>
 </html>
