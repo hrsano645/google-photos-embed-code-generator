@@ -94,9 +94,9 @@
         }
       }
 
-
-    // A simple callback implementation.
+    // callback implementation.
     function pickerCallback(data) {
+      var result_text = '<p>埋め込みタグは未生成です</p>';
       
       if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
 
@@ -128,7 +128,7 @@
           });
 
           // dom操作で描写するタグを生成する
-          var embed_tags_str = ""
+          var embed_tags_str = '';
           for (var img_i = 0; img_i < select_img_urls.length; img_i++){
               
             // imgタグを生成する
@@ -147,7 +147,7 @@
           }
 
           // アルバム情報を含めたタグを生成
-          var result_text = `
+          result_text = `
           <table  class="mdl-data-table mdl-js-data-table">
             <tr>
               <td>アルバム名</td>
