@@ -38,6 +38,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment-with-locales.min.js"></script>
   <script type="text/javascript">
 
+    // ref: https://github.com/howdy39/google-picker-api-demo/blob/master/docs/index.html
+
     // The Browser API key obtained from the Google Developers Console.
     var developerKey = 'AIzaSyCrQKCG_Ly61zaO6-ba93BjTTb_W6v_r4Y';
 
@@ -46,8 +48,11 @@
 
     // Scope to use to access user's photos.
     var scope = ['https://www.googleapis.com/auth/photos'];
+
+      var authApiLoaded = false;
       var pickerApiLoaded = false;
       var oauthToken;
+      var viewIdForhandleAuthResult;
 
       // Use the API Loader script to load google.picker and gapi.auth.
       function onApiLoad() {
@@ -56,72 +61,71 @@
       }
 
       function onAuthApiLoad() {
-        window.gapi.auth.authorize(
-            {
-              'client_id': clientId,
-              'scope': scope,
-              'immediate': false
-            },
-            handleAuthResult);
+        authApiLoaded = true;
       }
 
       function onPickerApiLoad() {
         pickerApiLoaded = true;
-        createPicker();
       }
 
       function handleAuthResult(authResult) {
         if (authResult && !authResult.error) {
           oauthToken = authResult.access_token;
-          createPicker();
+          createPicker(true);
         }
       }
 
       // Create and render a Picker object for picking user Photos.
-      function createPicker() {
-        if (pickerApiLoaded && oauthToken) {
-          var picker = new google.picker.PickerBuilder().
+      function createPicker(setOAuthToken) {
+        if (authApiLoaded && pickerApiLoaded) {
+          var picker;
+          
+          if(authApiLoaded && oauthToken && setOAuthToken) {
+            picker = new google.picker.PickerBuilder().
               addView(google.picker.ViewId.PHOTOS).
               enableFeature(google.picker.Feature.MULTISELECT_ENABLED).
               setOAuthToken(oauthToken).
               setDeveloperKey(developerKey).
               setCallback(pickerCallback).
               build();
-          picker.setVisible(true);
+
+            picker.setVisible(true);
+          }
         }
       }
 
-      // A simple callback implementation.
-      function pickerCallback(data) {
-      var url = 'nothing';
+
+    // A simple callback implementation.
+    function pickerCallback(data) {
+      
       if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
 
-          // アルバム情報を取得
-          var album = data[google.picker.Response.PARENTS][0];
+        // アルバム情報を取得
+        var album = data[google.picker.Response.PARENTS][0];
 
-          // 日付フォーマットをmoment.jsで扱う
-          moment.locale("ja");
+        // 日付フォーマットをmoment.jsで扱う
+        moment.locale("ja");
 
-          // ここはあたらしくオブジェクトを作る必要はないけど
-          var pick_album_info = new Object();
-          pick_album_info["album_name"] = album["name"];
-          pick_album_info["album_updated_date"] = moment(album["lastEditedUtc"]).utc().format();
-          pick_album_info["album_audience"] = album["audience"];
+        // ここはあたらしくオブジェクトを作る必要はないけど..
+        var pick_album_info = new Object();
+        pick_album_info["album_name"] = album["name"];
+        pick_album_info["album_updated_date"] = moment(album["lastEditedUtc"]).utc().format();
+        pick_album_info["album_audience"] = album["audience"];
 
-          // 選択した写真
-          var doc = data[google.picker.Response.DOCUMENTS];
+        // 選択した写真
+        var doc = data[google.picker.Response.DOCUMENTS];
 
-          // 選択した画像の各jsonから"thumbnails"Array内の最後のオブジェクト型内にあるurlを取り出す。結果は複数のurlのarrayが生成される
-          var select_img_urls = doc.map(
-            function get_thum_url(currentValue, index, array){
-                // サムネイル用
-                var thum_obj = currentValue["thumbnails"].slice(1)[0];
-                // 埋め込みタグ用
-                var embed_obj = currentValue["thumbnails"].slice(-1)[0];
-                return ({"thum_obj":thum_obj,
-                        "embed_obj":embed_obj,
-                        });
-            });
+        // 選択した画像の各jsonから"thumbnails"Array内の最後のオブジェクト型内にあるurlを取り出す。結果は複数のurlのarrayが生成される
+        var select_img_urls = doc.map(
+          function get_thum_url(currentValue, index, array){
+              // サムネイル用
+              var thum_obj = currentValue["thumbnails"].slice(1)[0];
+              // 埋め込みタグ用
+              var embed_obj = currentValue["thumbnails"].slice(-1)[0];
+              return ({"thum_obj":thum_obj,
+                      "embed_obj":embed_obj,
+                      });
+          });
 
           // dom操作で描写するタグを生成する
           var embed_tags_str = ""
@@ -160,10 +164,10 @@
             ${embed_tags_str}
           </table>
           `;
-        }
-        document.getElementById('result').innerHTML = result_text;
       }
-    </script>
+      document.getElementById('result').innerHTML = result_text;
+    }
+  </script>
 </head>
 
 <body>
@@ -206,7 +210,39 @@
       <div id="result"></div>
     </div>
   </div>
+
+  <!-- The Google API Loader script. -->
+  <script type="text/javascript" src="https://apis.google.com/js/api.js?onload=onApiLoad"></script>
+    <script type="text/javascript">
+      Array.prototype.forEach.call(document.querySelectorAll('#views a'), function (ele) {
+        ele.onclick = function () {
+          // var viewId = google.picker.ViewId.PHOTOS;
+          var setOAuthToken = true;
+          
+          // console.log(authApiLoaded);
+          // console.log(oauthToken);
+          if(authApiLoaded && !oauthToken) {
+            // viewIdForhandleAuthResult = viewId;
+            // console.log(typeof viewIdForhandleAuthResult)
+            window.gapi.auth.authorize(
+              {
+                'client_id': clientId,
+                'scope': scope,
+                'immediate': false
+              },
+              handleAuthResult
+            );
+          } else {
+            // console.log('not oauthToken')
+            // createPicker(viewId, setOAuthToken);
+            createPicker(setOAuthToken);
+          }
+          return false;
+        }
+      });
     </script>
     <script src="https://code.getmdl.io/1.1.3/material.min.js"></script>
   </body>
+</body>
+
 </html>
