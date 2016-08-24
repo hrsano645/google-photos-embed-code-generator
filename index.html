@@ -47,50 +47,50 @@
     // Scope to use to access user's photos.
     var scope = ['https://www.googleapis.com/auth/photos'];
 
-      var authApiLoaded = false;
-      var pickerApiLoaded = false;
-      var oauthToken;
-      var viewIdForhandleAuthResult;
+    var authApiLoaded = false;
+    var pickerApiLoaded = false;
+    var oauthToken;
+    var viewIdForhandleAuthResult;
 
-      // Use the API Loader script to load google.picker and gapi.auth.
-      function onApiLoad() {
-        gapi.load('auth', {'callback': onAuthApiLoad});
-        gapi.load('picker', {'callback': onPickerApiLoad});
+    // Use the API Loader script to load google.picker and gapi.auth.
+    function onApiLoad() {
+      gapi.load('auth', {'callback': onAuthApiLoad});
+      gapi.load('picker', {'callback': onPickerApiLoad});
+    }
+
+    function onAuthApiLoad() {
+      authApiLoaded = true;
+    }
+
+    function onPickerApiLoad() {
+      pickerApiLoaded = true;
+    }
+
+    function handleAuthResult(authResult) {
+      if (authResult && !authResult.error) {
+        oauthToken = authResult.access_token;
+        createPicker(true);
       }
+    }
 
-      function onAuthApiLoad() {
-        authApiLoaded = true;
-      }
+    // Create and render a Picker object for picking user Photos.
+    function createPicker(setOAuthToken) {
+      if (authApiLoaded && pickerApiLoaded) {
+        var picker;
+        
+        if(authApiLoaded && oauthToken && setOAuthToken) {
+          picker = new google.picker.PickerBuilder().
+            addView(google.picker.ViewId.PHOTOS).
+            enableFeature(google.picker.Feature.MULTISELECT_ENABLED).
+            setOAuthToken(oauthToken).
+            setDeveloperKey(developerKey).
+            setCallback(pickerCallback).
+            build();
 
-      function onPickerApiLoad() {
-        pickerApiLoaded = true;
-      }
-
-      function handleAuthResult(authResult) {
-        if (authResult && !authResult.error) {
-          oauthToken = authResult.access_token;
-          createPicker(true);
+          picker.setVisible(true);
         }
       }
-
-      // Create and render a Picker object for picking user Photos.
-      function createPicker(setOAuthToken) {
-        if (authApiLoaded && pickerApiLoaded) {
-          var picker;
-          
-          if(authApiLoaded && oauthToken && setOAuthToken) {
-            picker = new google.picker.PickerBuilder().
-              addView(google.picker.ViewId.PHOTOS).
-              enableFeature(google.picker.Feature.MULTISELECT_ENABLED).
-              setOAuthToken(oauthToken).
-              setDeveloperKey(developerKey).
-              setCallback(pickerCallback).
-              build();
-
-            picker.setVisible(true);
-          }
-        }
-      }
+    }
 
     // callback implementation.
     function pickerCallback(data) {
