@@ -165,43 +165,58 @@
 </head>
 
 <body>
-  <!--使い方を左, アルバム側を左にする-->
-  <div class="mdl-grid">
-    <div class="mdl-cell mdl-cell--4-col mdl-cell--4-col-tablet mdl-cell--4-col-phone">
-      <h1>Googleフォト埋め込みタグジェネレーター</h1>
-      <h2 id="-">ここは何？</h2>
-      <p>Googleフォトのアルバム内にある写真から埋め込みタグを生成します。</p>
-      <h2 id="-">利用方法</h2>
-      <ul>
-        <li>このページ内にある「GOOGLEフォトのアルバム一覧を開く...  」ボタンを押すと自動的にGoogleよりoAuthの認証が実行されます
-          （この時点で同意できない方はご利用の中断をお願い致します）</li>
-        <li>次にGoogleフォトのアルバム一覧が表示されますので、埋め込みタグを生成させたいアルバム内の写真を選択して下さい</li>
-        <li>選択後に、選択したアルバム情報と選択した写真の埋め込みタグが生成されます</li>
-      </ul>
-      <h2 id="-">参考</h2>
-      <ul>
-        <li><a href="https://developers.google.com/picker/">Picker  |  Google Developers</a>
+  <div class="mdl-layout mdl-js-layout">
+    <main class="mdl-layout__content">
+    <!--使い方を左, アルバム側を左にする-->
+      <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--6-col-phone">
+          <h1>Googleフォト埋め込みタグジェネレーター</h1>
+          <h2 id="-">ここは何？</h2>
+          <p>Googleフォトのアルバム内にある写真から埋め込みタグを生成します。</p>
+          <h2 id="-">利用方法</h2>
           <ul>
-            <li><a href="https://developers.google.com/picker/docs/#hiworld">Picker API Developer&#39;s Guide  |  Picker  |  Google Developers</a></li>
-            <li><a href="https://developers.google.com/picker/docs/reference">Picker Class Reference  |  Picker  |  Google Developers</a></li>
-            <li><a href="https://developers.google.com/picker/docs/results">Picker JSON Reference  |  Picker  |  Google Developers</a></li>
+            <li>このページ内にある「GOOGLEフォトのアルバム一覧を開く...  」ボタンを押すと自動的にGoogleよりoAuthの認証が実行されます
+              （この時点で同意できない方はご利用の中断をお願い致します）</li>
+            <li>次にGoogleフォトのアルバム一覧が表示されますので、埋め込みタグを生成させたいアルバム内の写真を選択して下さい</li>
+            <li>選択後に、選択したアルバム情報と選択した写真の埋め込みタグが生成されます</li>
           </ul>
-        </li>
-        <li><a href="http://qiita.com/howdy39/items/a7de282e6dd5350f7a7c">Google Pickerを使ってWebサイトのUXを向上させよう - Qiita</a></li>
-        <li><a href="https://getmdl.io/index.html">Material Design Lite</a></li>
-      </ul>
-      <h2 id="-">ライセンス情報</h2>
-      <p>MIT License. See <a href="./LICENSE">LICENSE File</a></p>
-    </div>
-    <div id="views" class="mdl-cell mdl-cell--8-col mdl-cell--8-col-tablet mdl-cell--8-col-phone">
-      <a id="run-picker" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
-        Googleフォトのアルバム一覧を開く...
-      </a>
-      <br>
-      <div id="result"></div>
+          <h2 id="-">参考</h2>
+          <ul>
+            <li><a href="https://developers.google.com/picker/">Picker  |  Google Developers</a>
+              <ul>
+                <li><a href="https://developers.google.com/picker/docs/#hiworld">Picker API Developer&#39;s Guide  |  Picker  |  Google Developers</a></li>
+                <li><a href="https://developers.google.com/picker/docs/reference">Picker Class Reference  |  Picker  |  Google Developers</a></li>
+                <li><a href="https://developers.google.com/picker/docs/results">Picker JSON Reference  |  Picker  |  Google Developers</a></li>
+              </ul>
+            </li>
+            <li><a href="http://qiita.com/howdy39/items/a7de282e6dd5350f7a7c">Google Pickerを使ってWebサイトのUXを向上させよう - Qiita</a></li>
+            <li><a href="https://getmdl.io/index.html">Material Design Lite</a></li>
+          </ul>
+          <h2>推奨環境</h2>
+          <p>推奨環境（開発環境）は以下のとおりです</p>
+          <ul>
+            <li>Chrome 52</li>
+            <li>Android Chrome 52</li>
+            <li>Microsoft Edge (PC)</li>
+          </ul>
+          <p>javascript Template literalを利用しているため、chromeとfirefox以外は基本的に非推奨です</p>
+          <p>
+            <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/template_strings">Template literal - JavaScript | MDN
+            </a>
+          </p>
+          <h2 id="-">ライセンス情報</h2>
+          <p>MIT License. See <a href="./LICENSE">LICENSE File</a></p>
+        </div>
+        <div id="views" class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--6-col-phone">
+          <a id="run-picker" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+            Googleフォトのアルバム一覧を開く...
+          </a>
+          <br>
+          <div id="result"></div>
+        </div>
+      </main>
     </div>
   </div>
-
   <!-- The Google API Loader script. -->
   <script type="text/javascript" src="https://apis.google.com/js/api.js?onload=onApiLoad"></script>
   <script type="text/javascript">
