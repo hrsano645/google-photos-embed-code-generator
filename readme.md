@@ -1,4 +1,4 @@
-# Google Photo Embed Code Generator
+# Google Photos Embed Code Generator
 
 ## ここは何？
 
@@ -31,7 +31,6 @@ Googleフォトのアルバム内にある写真から埋め込みタグを生�
 javascript Template literalを利用しているため、chromeとfirefox以外は基本的に非推奨です
 
 [Template literal - JavaScript | MDN](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/template_strings)
-
 
 ## ライセンス情報
 
