@@ -19,6 +19,7 @@ Googleフォトのアルバム内にある写真から埋め込みタグを生�
 - [Google Pickerを使ってWebサイトのUXを向上させよう - Qiita](http://qiita.com/howdy39/items/a7de282e6dd5350f7a7c)
 - [howdy39/google-picker-api-demo](https://github.com/howdy39/google-picker-api-demo)
 - [Material Design Lite](https://getmdl.io/index.html)
+- [Moment.js | Home](http://momentjs.com/)
 
 ## 推奨環境
 
