@@ -8,226 +8,130 @@
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://code.getmdl.io/1.2.0/material.indigo-pink.min.css">
-  <style>
-    h1 {
-      font-size:20px;
-      margin-top:8px;
-      margin-bottom:0px;
-      padding-bottom:6px;
-      border-bottom:1px solid #898989;
-    }
-    h2 {
-      font-size:16px;
-      margin-top:6px;
-      margin-bottom:0px;
-    }
+  <link rel="stylesheet" href="./css/style.css">
 
-    ul {
-      margin-top:0px;
-    }
-    table {
-      border-collapse: collapse;
-      margin: 10px;
-    }
-    
-    table tr {
-      border: 1;
-      border-top: 1px solid #e0e0e0;
-    }
-    
-    table td {
-      border-bottom: 1px solid #e0e0e0;
-      border-spacing: 0;
-      padding: 5px
-    }
-  </style>
   <!-- load moment.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment-with-locales.min.js"></script>
-  <script type="text/javascript">
-
-    // ref: https://github.com/howdy39/google-picker-api-demo/blob/master/docs/index.html
-
-    // The Browser API key obtained from the Google Developers Console.
-    var developerKey = 'AIzaSyCrQKCG_Ly61zaO6-ba93BjTTb_W6v_r4Y';
-
-    // The Client ID obtained from the Google Developers Console. Replace with your own Client ID.
-    var clientId = "836573439566-pannen061gqgreoo4qv1na39on7smtpd.apps.googleusercontent.com";
-
-    // Scope to use to access user's photos.
-    var scope = ['https://www.googleapis.com/auth/photos'];
-
-    var authApiLoaded = false;
-    var pickerApiLoaded = false;
-    var oauthToken;
-    var viewIdForhandleAuthResult;
-
-    // Use the API Loader script to load google.picker and gapi.auth.
-    function onApiLoad() {
-      gapi.load('auth', {'callback': onAuthApiLoad});
-      gapi.load('picker', {'callback': onPickerApiLoad});
-    }
-
-    function onAuthApiLoad() {
-      authApiLoaded = true;
-    }
-
-    function onPickerApiLoad() {
-      pickerApiLoaded = true;
-    }
-
-    function handleAuthResult(authResult) {
-      if (authResult && !authResult.error) {
-        oauthToken = authResult.access_token;
-        createPicker(true);
-      }
-    }
-
-    // Create and render a Picker object for picking user Photos.
-    function createPicker(setOAuthToken) {
-      if (authApiLoaded && pickerApiLoaded) {
-        var picker;
-        
-        if(authApiLoaded && oauthToken && setOAuthToken) {
-          picker = new google.picker.PickerBuilder().
-            addView(google.picker.ViewId.PHOTOS).
-            enableFeature(google.picker.Feature.MULTISELECT_ENABLED).
-            setOAuthToken(oauthToken).
-            setDeveloperKey(developerKey).
-            setCallback(pickerCallback).
-            build();
-
-          picker.setVisible(true);
-        }
-      }
-    }
-
-    // callback implementation.
-    function pickerCallback(data) {
-      var result_text = '<p>埋め込みタグは未生成です</p>';
-      
-      if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
-
-        // アルバム情報を取得
-        var album = data[google.picker.Response.PARENTS][0];
-
-        // 日付フォーマットをmoment.jsで扱う
-        moment.locale("ja");
-
-        // ここはあたらしくオブジェクトを作る必要はないけど..
-        var pick_album_info = new Object();
-        pick_album_info["album_name"] = album["name"];
-        pick_album_info["album_updated_date"] = moment(album["lastEditedUtc"]).utc().format();
-        pick_album_info["album_audience"] = album["audience"];
-
-        // 選択した写真
-        var doc = data[google.picker.Response.DOCUMENTS];
-
-        // 選択した画像の各jsonから"thumbnails"Array内の最後のオブジェクト型内にあるurlを取り出す。結果は複数のurlのarrayが生成される
-        var select_img_urls = doc.map(
-          function get_thum_url(currentValue, index, array){
-              // サムネイル用
-              var thum_obj = currentValue["thumbnails"].slice(1)[0];
-              // 埋め込みタグ用
-              var embed_obj = currentValue["thumbnails"].slice(-1)[0];
-              return ({"thum_obj":thum_obj,
-                      "embed_obj":embed_obj,
-                      });
-          });
-
-          // dom操作で描写するタグを生成する
-          var embed_tags_str = '';
-          for (var img_i = 0; img_i < select_img_urls.length; img_i++){
-              
-            // imgタグを生成する
-            var embed_obj = select_img_urls[img_i].embed_obj
-            var embed_tag_str = `<img src="${embed_obj.url}" width="${embed_obj.width}" height="${embed_obj.height}">`
-
-            // テーブルに入れる
-            embed_tags_str = embed_tags_str + `
-              <tr>
-                <td><img src="${select_img_urls[img_i].thum_obj.url}"></td>
-                <td>
-                  <textarea name="embed_tag" rows="4" cols="40" onclick="this.select();">${embed_tag_str}</textarea>
-                </td>
-              </tr>
-            `;
-          }
-
-          // アルバム情報を含めたタグを生成
-          result_text = `
-          <table  class="mdl-data-table mdl-js-data-table">
-            <tr>
-              <td>アルバム名</td>
-              <td>${pick_album_info["album_name"]}</td>
-            </tr>
-            <tr>
-              <td>audience(公開範囲)</td>
-              <td>${pick_album_info["album_audience"]}</td>
-            </tr>
-            ${embed_tags_str}
-          </table>
-          `;
-      }
-      document.getElementById('result').innerHTML = result_text;
-    }
-  </script>
+  <script src="./js/gpecg.js"></script>
 </head>
 
 <body>
-  <div class="mdl-layout mdl-js-layout">
+
+<!-- Always shows a header, even in smaller screens. -->
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <header class="mdl-layout__header">
+      <div class="mdl-layout__header-row">
+        <!-- Title -->
+        <span class="mdl-layout-title">Google Photos Embed Code Generator</span>
+        <!-- Add spacer, to align navigation to the right -->
+        <div class="mdl-layout-spacer"></div>
+      </div>
+    </header>
     <main class="mdl-layout__content">
-    <!--使い方を左, アルバム側を左にする-->
-      <div class="mdl-grid">
-        <div class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--6-col-phone">
-          <h1>Googleフォト埋め込みタグジェネレーター</h1>
+
+      <div class="main-menu mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+        <div class="mdl-card mdl-cell mdl-cell--12-col">
           <h2 id="-">ここは何？</h2>
-          <p>Googleフォトのアルバム内にある写真から埋め込みタグを生成します。</p>
-          <h2 id="-">利用方法</h2>
-          <ul>
-            <li>このページ内にある「GOOGLEフォトのアルバム一覧を開く...  」ボタンを押すと自動的にGoogleよりoAuthの認証が実行されます
-              （この時点で同意できない方はご利用の中断をお願い致します）</li>
-            <li>次にGoogleフォトのアルバム一覧が表示されますので、埋め込みタグを生成させたいアルバム内の写真を選択して下さい</li>
-            <li>選択後に、選択したアルバム情報と選択した写真の埋め込みタグが生成されます</li>
-          </ul>
-          <h2 id="-">参考</h2>
-          <ul>
-            <li><a href="https://developers.google.com/picker/">Picker  |  Google Developers</a>
-              <ul>
-                <li><a href="https://developers.google.com/picker/docs/#hiworld">Picker API Developer&#39;s Guide  |  Picker  |  Google Developers</a></li>
-                <li><a href="https://developers.google.com/picker/docs/reference">Picker Class Reference  |  Picker  |  Google Developers</a></li>
-                <li><a href="https://developers.google.com/picker/docs/results">Picker JSON Reference  |  Picker  |  Google Developers</a></li>
-              </ul>
-            </li>
-            <li><a href="http://qiita.com/howdy39/items/a7de282e6dd5350f7a7c">Google Pickerを使ってWebサイトのUXを向上させよう - Qiita</a></li>
-            <li><a href="https://github.com/howdy39/google-picker-api-demo">howdy39/google-picker-api-demo</a></li>
-            <li><a href="https://getmdl.io/index.html">Material Design Lite</a></li>
-            <li><a href="http://momentjs.com/">Moment.js | Home</a></li>
-          </ul>
-          <h2>推奨環境</h2>
-          <p>推奨環境（開発環境）は以下のとおりです</p>
-          <ul>
-            <li>Chrome 52</li>
-            <li>Android Chrome 52</li>
-            <li>Microsoft Edge (PC)</li>
-          </ul>
-          <p>javascript Template literalを利用しているため、chromeとfirefox以外は基本的に非推奨です</p>
-          <p>
-            <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/template_strings">Template literal - JavaScript | MDN
-            </a>
-          </p>
-          <h2 id="-">ライセンス情報</h2>
-          <p>MIT License. See <a href="./LICENSE">LICENSE File</a></p>
-        </div>
-        <div id="views" class="mdl-cell mdl-cell--6-col mdl-cell--6-col-tablet mdl-cell--6-col-phone">
+          <p>Google Photos Embed Code Generatorは、Googleフォトのアルバム内にある写真から埋め込みタグを生成します。</p>
+
           <a id="run-picker" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
-            Googleフォトのアルバム一覧を開く...
+              Googleフォトのアルバム一覧を開く...
           </a>
-          <br>
-          <div id="result"></div>
+          <br />
+          <br />
         </div>
-      </main>
-    </div>
+      </div>
+      <div class="result-area mdl-grid mdl-grid--no-spacing mdl-shadow--2dp" id="result"></div>
+      <!-- <div class="result-area mdl-grid mdl-grid--no-spacing mdl-shadow--2dp" id="result_tmp">
+        <section class="embed_code_card section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+          <header class="section__play-btn mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white">
+            <div class="mdl-card__media">
+              <img src="https://getmdl.io/templates/android-dot-com/images/more-from-1.png" alt="">
+            </div>
+          </header>
+          <div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
+            <div class="mdl-card__supporting-text">
+              <h4>[Title]</h4>
+              <div class="html_embed_code">
+                <span>HTML</span>
+                <input type="text" id="user">
+                <button class="mdl-button mdl-js-button mdl-button--icon">
+                    <i class="material-icons">content_copy</i>
+                </button>
+              </div>
+
+              <div class="markdown_embed_code">
+                  <span>Markdown</span>
+                  <input type="text" id="user">
+                  <button class="mdl-button mdl-js-button mdl-button--icon">
+                      <i class="material-icons">content_copy</i>
+                  </button>
+                </div>
+            </div>
+          </div>
+          <div class="mdl-menu__container is-upgraded"><div class="mdl-menu__outline mdl-menu--bottom-right"></div><ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="btn1" data-upgraded=",MaterialMenu">
+            <li class="mdl-menu__item" tabindex="-1">Lorem</li>
+            <li class="mdl-menu__item" disabled="" tabindex="-1">Ipsum</li>
+            <li class="mdl-menu__item" tabindex="-1">Dolor</li>
+          </ul></div>
+        </section>
+
+        <section class="embed_code_card section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+            <header class="section__play-btn mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white">
+              <div class="mdl-card__media">
+                <img src="${select_img_urls[img_i].embed_obj.url}" alt="">
+              </div>
+            </header>
+            <div class="mdl-card mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--4-col-phone">
+              <div class="mdl-card__supporting-text">
+                <h4>${embed_pic_name}</h4>
+                <div class="html_embed_code_area">
+                  <h5>HTML</h5>
+                  <textarea name="embed_tag" rows="4" cols="40" onclick="this.select()">${html_embed_tag_str}</textarea>
+                </div>
+
+                <div class="markdown_embed_code_area">
+                    <h5>Markdown</h5>
+                    <input type="text" id="markdown_code" value="${md_embed_tag_str}" onclick="this.select()">
+              </div>
+            </div>
+            <div class="mdl-menu__container is-upgraded"><div class="mdl-menu__outline mdl-menu--bottom-right"></div><ul class="mdl-menu mdl-js-menu mdl-menu--bottom-right" for="btn1" data-upgraded=",MaterialMenu">
+              <li class="mdl-menu__item" tabindex="-1">Lorem</li>
+              <li class="mdl-menu__item" disabled="" tabindex="-1">Ipsum</li>
+              <li class="mdl-menu__item" tabindex="-1">Dolor</li>
+            </ul></div>
+          </section>
+      </div> -->
+
+      <div class="readme-area">
+        <!-- ここはカードに入れる -->
+        <h2 id="-">利用方法</h2>
+        <ul>
+          <li>このページ内にある「GOOGLEフォトのアルバム一覧を開く...  」ボタンを押すと自動的にGoogleよりoAuthの認証が実行されます
+            （この時点で同意できない方はご利用の中断をお願い致します）</li>
+          <li>次にGoogleフォトのアルバム一覧が表示されますので、埋め込みタグを生成させたいアルバム内の写真を選択して下さい</li>
+          <li>選択後に、選択したアルバム情報と選択した写真の埋め込みタグが生成されます</li>
+        </ul>
+        <h2 id="-">プロジェクトサイト</h2>
+          <a href="https://github.com/hrsano645/google-photos-embed-code-generator">GitHub - hrsano645/google-photos-embed-code-generator: Generate Embed Code(img tag) for Google Photos</a>
+        <h2>推奨環境</h2>
+        <p>推奨環境（開発環境）は以下のとおりです</p>
+        <ul>
+          <li>Chrome 52</li>
+          <li>Android Chrome 52</li>
+          <li>Microsoft Edge (PC)</li>
+        </ul>
+        <p>javascript Template literalを利用しているため、chromeとfirefox以外は基本的に非推奨です</p>
+        <p>
+          <a href="https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/template_strings">Template literal - JavaScript | MDN
+          </a>
+        </p>
+        <h2 id="-">ライセンス情報</h2>
+        <p>MIT License. See <a href="https://raw.githubusercontent.com/hrsano645/google-photos-embed-code-generator/master/LICENSE">LICENSE File</a></p>
+      </div>
+    </main>
   </div>
+
   <!-- The Google API Loader script. -->
   <script type="text/javascript" src="https://apis.google.com/js/api.js?onload=onApiLoad"></script>
   <script type="text/javascript">
